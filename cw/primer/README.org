@@ -1,15 +1,174 @@
 * Git 从入门到精通
 ** Git vs GitHub
-*** Git 是一个版本管理软件
-*** GitHub 是一个可以免费存放用 Git 管理的项目的网站
+- Git 是一个版本管理软件
+- GitHub 是一个可以免费存放用 Git 管理的项目的网站
+
 ** 适用人群（场景）
 *** 文字工作者
 简洁管理稿件的每次修改记录。
+
 *** 版本管理
 对很多文件做修改，想随时把这些文件的内容快速切换到别的版本。
+
 *** 保存作品
 随时随地，打开手机、平板就能浏览内容。
+
 *** 细节把控
 想清楚地知道每次对文件修改的细节。
+
 *** 团队合作
 异时、异地对项目进行推进，Git 是最佳解决方案。
+
+** 使用 Git 管理项目（基础）
+*** Git 的常用命令
+**** git init
+使用 Git 管理一个文件夹的方法很简单，只需将其初始化为一个 Git 仓库。
+- Create an empty Git repository or reinitialize an existing one
+
+**** git clone
+将远程的仓库克隆到本地。
+- Clone a repository into a new directory
+#+begin_src shell
+  # 直接克隆到本地目录
+  git clone https://github.com/geometryolife/GitNotes.git
+  # 如果 Fork 仓库后，推荐使用 SSH 方式
+  git clone git@github.com:geometryolife/GitNotes.git
+#+end_src
+
+**** git status
+显示工作树的状态
+- Show the working tree status
+- Untracked files
+  - 未追踪文件
+    - 只有被添加（add）的更改才能被提交（commit）。
+    - 只要更改被提交了，那么它就会被很好地保存下来。
+    - 可以随时回退到某一次提交，查看以前对文件做了哪些更改。
+    - 没有提交的更改，删除后便无法找回了
+- Changes to be committed
+  - 要提交的更改
+- Changes not staged for commit
+  - 未暂存以进行提交的更改
+    - 添加后，再修改的内容必须再添加一次，才能被提交，否则只提交先前添加的内容。
+
+**** git add
+添加文件到索引（暂存区）
+- Add file contents to the index
+#+begin_src shell
+  # 添加指定文件
+  git add fileName
+  # 添加所有的更改
+  git add .
+#+end_src
+
+**** git diff
+显示本次还没有被添加更改的内容。
+- Show changes between commits, commit and working tree, etc
+
+**** git reset
+将 HEAD 指针复位至指定状态
+- Reset current HEAD to the specified state
+
+**** git config
+对 Git 做一些自定义设置
+- 配置信息保存在用户目录的 .gitconfig 文件中。
+#+begin_src shell
+  # 设置提交用户的姓名
+  git config --global user.name "Joe Chen"
+  # 设置提交用户的邮箱
+  git config --global user.email "xxx@gmail.com"
+  # 设置编辑提交信息的编辑器
+  git config --global core.editor emacs
+#+end_src
+
+**** git commit
+提交（记录）更改到 Git 仓库中
+- Record changes to the repository
+#+begin_src shell
+  # 直接编写提交信息
+  git commit -m "Commit messages"
+  # 打开编辑器编写提交信息
+  git commit
+  # 添加所有修改并提交，但是不会追踪新建的文件，即未追踪过的文件无法被提交
+  git commit -a
+#+end_src
+
+**** git rm
+当 Git 开始追踪某个文件，这个文件就会一直被追踪，除非让 Git 停止追踪。
+- Remove files from the working tree and from the index
+#+begin_src shell
+  # 让 Git 停止追踪某个文件
+  git rm --cached fileName
+#+end_src
+
+*** 忽略文件列表
+在项目根目录新建 .gitignore 文件，并在里面添加要 Git 忽略的文件名或目录名，那么 Git 就不会管理这些文件。
+
+*** Git Status 的文件状态
+- new file
+- modified
+- deleted
+
+** 使用 Git 管理项目（进阶）
+*** Git 分支
+- 不使用 Git 来管理项目时，通常对项目做大的修改的方式：操作副本。
+  - 如果修改成功，那么就使用这个副本。
+  - 如果修改失败，那么就丢弃这个副本。
+- Git 有一个更优雅、更方便、更快捷的管理方式：Git 分支。
+
+**** git branch
+- List, create, or delete branches
+#+begin_src shell
+  # 新建一个名为 pictures 的分支
+  git branch pictures
+  # 列出本地分支，* 号标记所在分支
+  git branch
+  # 删除分支
+  git branch -d branchName
+  # 强制删除分支
+  git branch -D branchName
+#+end_src
+
+**** git checkout
+#+begin_src shell
+  # 检出分支
+  # 切换到 pictures 分支
+  git checkout pictures
+#+end_src
+
+*** 合并分支
+**** git merge
+#+begin_src shell
+  # 切换回主分支
+  git checkout main
+  # 将 pictures 分支合并到 main 分支中
+  git merge pictures
+#+end_src
+
+*** 添加远程仓库地址
+**** git remote
+#+begin_src shell
+  # 将本地的由 Git 管理的项目仓库提交到 GitHub 的远程仓库
+  # HTTP 方式
+  git remote add origin https://github.com/geometryolife/GitHub-Learning.git
+  # SSH 方式
+  git remote add origin git@github.com:geometryolife/GitHub-Learning.git
+#+end_src
+
+*** 推送到远程仓库
+**** git push
+- Update remote refs along with associated objects
+#+begin_src shell
+  # 第一次 Push 时设置上游分支，后面的推送只需 git push 即可
+  git push --set-upstream origin main
+#+end_src
+
+*** 从远程仓库拉取最新的提交
+**** git pull
+- Fetch from and integrate with another repository or a local branch
+- git pull = git fetch + git merge
+
+** 开源的思考
+- 开源不是一个状态，它是一种意识形态，开源这种理念造就了今天这种基础（技术）。
+- 没有开源，就不会有今天这个互联网（时代）。
+- Tensorflow => Google => Tensorflow
+- 我为人人，人人为我
